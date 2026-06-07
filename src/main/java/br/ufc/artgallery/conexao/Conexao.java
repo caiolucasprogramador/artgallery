@@ -6,15 +6,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Conexao {
-    public class Conexao {
+    private static final Dotenv dotenv = Dotenv.load();
 
-        private static final Dotenv dotenv = Dotenv.load();
-        private static final String URL = dotenv.get("DB_URL");
-        private static final String USER = dotenv.get("DB_USER");
-        private static final String PASS = dotenv.get("DB_PASS");
+    private static final String URL = dotenv.get("DB_URL");
+    private static final String USER = dotenv.get("DB_USER");
+    private static final String PASS = dotenv.get("DB_PASS");
 
-        public static Connection getConexao() throws SQLException {
-            return DriverManager.getConnection(URL, USER, PASS);
-        }
+    public static Connection getConexao() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASS);
     }
 }
