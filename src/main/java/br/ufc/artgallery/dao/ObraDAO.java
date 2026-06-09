@@ -87,13 +87,14 @@ public class ObraDAO {
         String sql = "INSERT INTO obras(titulo, autor, tipo) VALUES(?, ?, ?)";
         try (Connection conn = Conexao.getConexao();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-        ps.setString(1, obra.getTitulo());
-        ps.setString(2, obra.getAutor());
-        ps.setString(3, obra.getTipo());
-        ps.executeUpdate();
+            ps.setString(1, obra.getTitulo());
+            ps.setString(2, obra.getAutor());
+            ps.setString(3, obra.getTipo());
+            ps.executeUpdate();
 
-        ResultSet rs = ps.getGeneratedKeys();
-        if (rs.next()) return rs.getInt("id");
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) return rs.getInt("id");
+            }
         }
         return -1;
     }
