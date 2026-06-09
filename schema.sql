@@ -19,7 +19,7 @@ create table pintura_digital (
 	resolucao varchar(20) not null,
 	software_utilizado varchar(50) not null,
 	
-	constraint FK_pintura_obra foreign key (id_obra) references obras(id)
+	constraint FK_pintura_obra foreign key (id_obra) references obras(id) on delete CASCADE
 );
 
 -- Modelagem 3D
@@ -28,7 +28,7 @@ create table modelagem_3d (
 	numero_poligonos int not null,
 	engine varchar(50) not null,
 
-	constraint FK_modelagem_obra foreign key (id_obra) references obras(id)
+	constraint FK_modelagem_obra foreign key (id_obra) references obras(id) on delete CASCADE
 );
 
 -- Arte Generativa
@@ -37,7 +37,7 @@ create table arte_generativa (
 	algoritmo varchar(50) not null,
 	seed bigint not null,
 	
-	constraint FK_generativa_obra foreign key (id_obra) references obras(id)
+	constraint FK_generativa_obra foreign key (id_obra) references obras(id) on delete CASCADE
 );
 
 -- Tabela avaliacoes (Relacionamento 1:N com obras)
@@ -48,7 +48,7 @@ create table avaliacoes (
 	nota int not null,
 	comentario TEXT not null,
 	
-	constraint FK_avaliacao_obra foreign key (id_obra) references obras(id),
+	constraint FK_avaliacao_obra foreign key (id_obra) references obras(id) on delete CASCADE,
 	constraint CK_nota check (nota between 0 and 10)
 );
 
@@ -64,6 +64,6 @@ create table exposicao_obra (
 	id_exposicao int not null,
 	
 	primary key (id_obra, id_exposicao),
-	constraint fk_eo_obra foreign key (id_obra) references obras(id),
-	constraint fk_eo_exposicao foreign key (id_exposicao) references exposicoes(id)
+	constraint fk_eo_obra foreign key (id_obra) references obras(id) on delete cascade,
+	constraint fk_eo_exposicao foreign key (id_exposicao) references exposicoes(id) on delete cascade
 )
