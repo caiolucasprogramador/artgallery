@@ -39,7 +39,7 @@ public class ObraDAO {
                 "WHERE o.id = ?";
 
         try (Connection conn = Conexao.getConexao();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery();) {
@@ -57,6 +57,36 @@ public class ObraDAO {
             throw new ObraNaoEncontradaException();
         }
     }
+
+    public Vector<Obra> buscarObra(String titulo) throws SQLException {
+        String sql = "SELECT o.*, p.resolucao, p.software_utilizado, " +
+                "m.numero_poligonos, m.engine, a.algoritmo, a.seed FROM obras o " +
+                "LEFT JOIN pintura_digital p ON p.id_obra = o.id " +
+                "LEFT JOIN modelagem_3d m ON m.id_obra = o.id " +
+                "LEFT JOIN arte_generativa a ON a.id_obra = o.id " +
+                "WHERE o.titulo = ?";
+
+        Vector<Obra> obras_encontradas = new Vector<Obra>();
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, titulo);
+            try (ResultSet rs = ps.executeQuery();) {
+                while (rs.next()) {
+                    Obra obra = mapearObra(rs);
+                    AvaliacaoDAO avdao = new AvaliacaoDAO();
+                    for (Avaliacao av : avdao.listarPorObra(obra.getId())) {
+                        obra.adicionarAvaliacao(av);
+                    }
+                    obras_encontradas.add(obra);
+                }
+            } catch (NotaInvalidaException e) {
+                throw new SQLException("Nota inválida: " + e.getMessage());
+            }
+        }
+        return obras_encontradas;
+    }
+
     public Vector<Obra> buscarTodas() throws SQLException {
         String sql = "SELECT o.*, p.resolucao, p.software_utilizado, " +
                 "m.numero_poligonos, m.engine, a.algoritmo, a.seed FROM obras o " +
@@ -102,11 +132,56 @@ public class ObraDAO {
     public void removerObra(int id) throws ObraNaoEncontradaException, SQLException {
         buscarObra(id);
 
-        String sql = "UPDATE obras SET ativa = false WHERE id = ?";
+        String sql = "DELETE FROM obras WHERE id = ?";
         try (Connection conn = Conexao.getConexao();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
+        }
+    }
+    public void ativarObra(int id) throws ObraNaoEncontradaException, SQLException {
+        buscarObra(id);
+
+        String sql = "UPDATE obras SET ativa = true WHERE id = ?";
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
+    }
+    public void desativarObra(int id) throws ObraNaoEncontradaException, SQLException {
+        buscarObra(id);
+
+        String sql = "UPDATE obras SET ativa = false WHERE id = ?";
+        try (Connection conn = Conexao.getConexao();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
+    }
+
+    public void atualizarObra(Obra obraAtualizada) throws SQLException {
+        String sql = "UPDATE obras SET titulo = ?, autor = ? WHERE id = ?";
+        try (Connection conn = Conexao.getConexao();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, obraAtualizada.getTitulo());
+            ps.setString(2, obraAtualizada.getAutor());
+            ps.setInt(3, obraAtualizada.getId());
+
+            ps.executeUpdate();
+        }
+    }
+
+    public boolean existeObra(String titulo, String autor) throws SQLException {
+        String sql = "SELECT id FROM obras WHERE titulo = ? AND autor = ?";
+        try (Connection conn = Conexao.getConexao();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, titulo);
+            ps.setString(2, autor);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
         }
     }
 }

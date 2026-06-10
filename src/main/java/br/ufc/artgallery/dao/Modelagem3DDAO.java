@@ -1,6 +1,7 @@
 package br.ufc.artgallery.dao;
 
 import br.ufc.artgallery.conexao.Conexao;
+import br.ufc.artgallery.models.ArteGenerativa;
 import br.ufc.artgallery.models.Modelagem3D;
 
 import java.sql.Connection;
@@ -15,6 +16,18 @@ public class Modelagem3DDAO {
             ps.setInt(1, idObra);
             ps.setInt(2, m.getNumeroPoligonos());
             ps.setString(3, m.getEngine());
+
+            ps.executeUpdate();
+        }
+    }
+    public void atualizar(Modelagem3D m) throws SQLException {
+        String sql = "UPDATE modelagem_3d SET numero_poligonos = ?, engine = ? WHERE id_obra = ?";
+
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, m.getNumeroPoligonos());
+            ps.setString(2, m.getEngine());
+            ps.setInt(3, m.getId());
 
             ps.executeUpdate();
         }
