@@ -87,6 +87,35 @@ public class ObraDAO {
         return obras_encontradas;
     }
 
+    public Vector<Obra> buscarObraPorAutor(String autor) throws SQLException {
+        String sql = "SELECT o.*, p.resolucao, p.software_utilizado, " +
+                "m.numero_poligonos, m.engine, a.algoritmo, a.seed FROM obras o " +
+                "LEFT JOIN pintura_digital p ON p.id_obra = o.id " +
+                "LEFT JOIN modelagem_3d m ON m.id_obra = o.id " +
+                "LEFT JOIN arte_generativa a ON a.id_obra = o.id " +
+                "WHERE o.autor = ?";
+
+        Vector<Obra> obras_encontradas = new Vector<Obra>();
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, autor);
+            try (ResultSet rs = ps.executeQuery();) {
+                while (rs.next()) {
+                    Obra obra = mapearObra(rs);
+                    AvaliacaoDAO avdao = new AvaliacaoDAO();
+                    for (Avaliacao av : avdao.listarPorObra(obra.getId())) {
+                        obra.adicionarAvaliacao(av);
+                    }
+                    obras_encontradas.add(obra);
+                }
+            } catch (NotaInvalidaException e) {
+                throw new SQLException("Nota inválida: " + e.getMessage());
+            }
+        }
+        return obras_encontradas;
+    }
+
     public Vector<Obra> buscarTodas() throws SQLException {
         String sql = "SELECT o.*, p.resolucao, p.software_utilizado, " +
                 "m.numero_poligonos, m.engine, a.algoritmo, a.seed FROM obras o " +
