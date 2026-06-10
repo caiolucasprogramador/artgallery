@@ -59,9 +59,8 @@ public class RepositorioObraDB implements IRepositorioObra {
     @Override
     public void atualizar(Obra obra) throws ObraNaoEncontradaException, SQLException {
         ObraDAO obraDAO = new ObraDAO();
-        if (!obraDAO.existeObra(obra.getTitulo(), obra.getAutor())) {
-            throw new ObraNaoEncontradaException();
-        }
+        obraDAO.buscarObra(obra.getId());
+        
         obraDAO.atualizarObra(obra);
         if (obra instanceof PinturaDigital) {
             PinturaDigitalDAO pdao = new PinturaDigitalDAO();
