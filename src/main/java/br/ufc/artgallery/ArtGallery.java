@@ -3,6 +3,7 @@ package br.ufc.artgallery;
 import br.ufc.artgallery.dao.AvaliacaoDAO;
 import br.ufc.artgallery.dao.ExposicaoDAO;
 import br.ufc.artgallery.dao.ObraDAO;
+import br.ufc.artgallery.excecoes.NotaInvalidaException;
 import br.ufc.artgallery.excecoes.ObraDesativadaException;
 import br.ufc.artgallery.excecoes.ObraJaCadastradaException;
 import br.ufc.artgallery.excecoes.ObraNaoEncontradaException;
@@ -92,7 +93,7 @@ public class ArtGallery implements IArtGallery {
     }
 
     @Override
-    public Vector<Obra> obrasExpostas(String nomeExposicao) throws SQLException {
+    public Vector<Obra> obrasExpostas(String nomeExposicao) throws SQLException, NotaInvalidaException {
         ExposicaoDAO exposicaoDAO = new ExposicaoDAO();
         Exposicao expo = exposicaoDAO.buscarPorNome(nomeExposicao);
         Vector<Obra> obras_expostas = exposicaoDAO.listarObras(expo.getId());

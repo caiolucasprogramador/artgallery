@@ -1,7 +1,9 @@
 package br.ufc.artgallery.dao;
 
 import br.ufc.artgallery.conexao.Conexao;
+import br.ufc.artgallery.excecoes.NotaInvalidaException;
 import br.ufc.artgallery.excecoes.ObraNaoEncontradaException;
+import br.ufc.artgallery.models.Avaliacao;
 import br.ufc.artgallery.models.Exposicao;
 import br.ufc.artgallery.dao.ObraDAO;
 import br.ufc.artgallery.models.Obra;
@@ -65,9 +67,15 @@ public class ExposicaoDAO {
         }
     }
 
-    public Vector<Obra> listarObras(int id_expo) throws SQLException {
-        String sql = "SELECT o.* FROM exposicao_obra eo " +
-                "JOIN obras o ON eo.id_obra = o.id WHERE id_exposicao = ?";
+    public Vector<Obra> listarObras(int id_expo) throws SQLException, NotaInvalidaException {
+        String sql = "SELECT o.*, p.resolucao, p.software_utilizado, " +
+                "m.numero_poligonos, m.engine, a.algoritmo, a.seed FROM exposicao_obra eo " +
+                "JOIN obras o ON eo.id_obra = o.id " +
+                "LEFT JOIN pintura_digital p ON p.id_obra = o.id " +
+                "LEFT JOIN modelagem_3d m ON m.id_obra = o.id " +
+                "LEFT JOIN arte_generativa a ON a.id_obra = o.id " +
+                "WHERE eo.id_exposicao = ?";
+
         Vector<Obra> obras = new Vector<Obra>();
         try (Connection conn = Conexao.getConexao();
             PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -75,7 +83,12 @@ public class ExposicaoDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 ObraDAO obraDAO = new ObraDAO();
                 while (rs.next()) {
-                    obras.add(obraDAO.mapearObra(rs));
+                    Obra obra = obraDAO.mapearObra(rs);
+                    AvaliacaoDAO avdao = new AvaliacaoDAO();
+                    for (Avaliacao av : avdao.listarPorObra(rs.getInt("id"))) {
+                        obra.adicionarAvaliacao(av);
+                    }
+                    obras.add(obra);
                 }
             }
         }
