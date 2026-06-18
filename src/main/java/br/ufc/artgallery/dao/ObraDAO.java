@@ -15,19 +15,21 @@ public class ObraDAO {
         int id = rs.getInt("id");
         String titulo = rs.getString("titulo");
         String autor = rs.getString("autor");
-
+        Obra obra;
         if (tipo.equals("PINTURA DIGITAL")) {
-            return new PinturaDigital(id, titulo, autor, rs.getString("resolucao"), rs.getString("software_utilizado"));
+            obra =  new PinturaDigital(id, titulo, autor, rs.getString("resolucao"), rs.getString("software_utilizado"));
         }
         else if (tipo.equals("MODELAGEM 3D")) {
-            return new Modelagem3D(id, titulo, autor, rs.getInt("numero_poligonos"), rs.getString("engine"));
+            obra = new Modelagem3D(id, titulo, autor, rs.getInt("numero_poligonos"), rs.getString("engine"));
         }
         else if (tipo.equals("ARTE GENERATIVA")) {
-            return new ArteGenerativa(id, titulo, autor, rs.getString("algoritmo"), rs.getLong("seed"));
+            obra =  new ArteGenerativa(id, titulo, autor, rs.getString("algoritmo"), rs.getLong("seed"));
         }
         else {
             throw new SQLException("Tipo não encontrado: " + tipo);
         }
+        obra.setAtiva(rs.getBoolean("ativa"));
+        return obra;
     }
 
     public Obra buscarObra(int id) throws ObraNaoEncontradaException, SQLException {
