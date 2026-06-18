@@ -94,4 +94,35 @@ public class ExposicaoDAO {
         }
         return obras;
     }
+
+    public Vector<Exposicao> listarTodas() throws SQLException {
+        String sql = "SELECT * FROM exposicoes ORDER BY nome";
+        Vector<Exposicao> lista = new Vector<Exposicao>();
+
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                lista.add(mapearExposicao(rs));
+            }
+        }
+        return lista;
+    }
+
+    public void removerExposicao(int idExposicao) throws SQLException {
+        String sqlVinculos = "DELETE FROM exposicao_obra WHERE id_exposicao = ?";
+        
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement ps = conn.prepareStatement(sqlVinculos)) {
+            ps.setInt(1, idExposicao);
+            ps.executeUpdate();
+        }
+        String sqlExpo = "DELETE FROM exposicoes WHERE id = ?";
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement ps = conn.prepareStatement(sqlExpo)) {
+            ps.setInt(1, idExposicao);
+            ps.executeUpdate();
+        }
+    }
 }
