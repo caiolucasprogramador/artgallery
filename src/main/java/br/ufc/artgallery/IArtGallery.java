@@ -22,8 +22,10 @@ public interface IArtGallery {
 
 
     void criarExposicao(Exposicao exposicao) throws SQLException;
-    void adicionarObraEmExposicao(int idObra, int idExpo) throws SQLException;
+    boolean adicionarObraEmExposicao(int idObra, int idExpo) throws SQLException;
 
     Vector<Obra> topObras() throws SQLException;
     Vector<Obra> obrasExpostas(String nomeExposicao) throws SQLException, NotaInvalidaException;
+
+    void atualizarObra(Obra obraAtualizada) throws SQLException, ObraNaoEncontradaException;
 }

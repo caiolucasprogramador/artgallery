@@ -11,7 +11,6 @@ import br.ufc.artgallery.models.Avaliacao;
 import br.ufc.artgallery.models.Exposicao;
 import br.ufc.artgallery.models.Obra;
 import br.ufc.artgallery.repository.IRepositorioObra;
-import br.ufc.artgallery.repository.RepositorioObraDB;
 
 import java.sql.SQLException;
 import java.util.Vector;
@@ -78,9 +77,9 @@ public class ArtGallery implements IArtGallery {
     }
 
     @Override
-    public void adicionarObraEmExposicao(int idObra, int idExpo) throws SQLException {
+    public boolean adicionarObraEmExposicao(int idObra, int idExpo) throws SQLException {
         ExposicaoDAO edao = new ExposicaoDAO();
-        edao.adicionarObra(idObra, idExpo);
+        return edao.adicionarObra(idObra, idExpo);
     }
 
     @Override
@@ -98,5 +97,10 @@ public class ArtGallery implements IArtGallery {
         Exposicao expo = exposicaoDAO.buscarPorNome(nomeExposicao);
         Vector<Obra> obras_expostas = exposicaoDAO.listarObras(expo.getId());
         return obras_expostas;
+    }
+
+    @Override
+    public void atualizarObra(Obra obraAtualizada) throws SQLException, ObraNaoEncontradaException {
+       repositorio.atualizar(obraAtualizada);
     }
 }

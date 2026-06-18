@@ -97,8 +97,7 @@ public class PainelAdicionarObraExposicao extends JPanel {
         }
 
         try {
-            ExposicaoDAO expoDAO = new ExposicaoDAO();
-            boolean sucesso = expoDAO.adicionarObra(obra.getId(), expo.getId());
+            boolean sucesso = gallery.adicionarObraEmExposicao(obra.getId(), expo.getId());
 
             if (sucesso) {
                 JOptionPane.showMessageDialog(this, "Obra vinculada à exposição com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);

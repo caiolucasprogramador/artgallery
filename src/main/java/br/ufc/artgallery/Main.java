@@ -17,7 +17,7 @@ public class Main {
                 MainFrame frame = new MainFrame(gallery);
                 frame.setVisible(true);
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
+                JOptionPane.showMessageDialog(  null, "Erro: " + e.getMessage());
             }
         });
 

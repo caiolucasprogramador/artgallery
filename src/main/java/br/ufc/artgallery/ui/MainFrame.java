@@ -24,6 +24,8 @@ public class MainFrame extends JFrame {
         PainelRemover painelRemover = new PainelRemover(gallery);
         PainelListar painelListar = new PainelListar(gallery);
         PainelBuscarPorAutor painelBuscarAutor = new PainelBuscarPorAutor(gallery);
+        PainelBuscarPorTitulo painelBuscarTitulo = new PainelBuscarPorTitulo(gallery);
+        PainelAtualizarObra painelAtualizarObra = new PainelAtualizarObra(gallery);
         PainelTopObras painelTopObras = new PainelTopObras(gallery);
         PainelAvaliar painelAvaliar = new PainelAvaliar(gallery);
         PainelAtivarDesativarObra painelStatusObra = new PainelAtivarDesativarObra(gallery);
@@ -39,6 +41,8 @@ public class MainFrame extends JFrame {
         painelPrincipal.add(painelRemover, "RemoverObra");
         painelPrincipal.add(painelListar, "ListarObras");
         painelPrincipal.add(painelBuscarAutor, "BuscarAutor");
+        painelPrincipal.add(painelBuscarTitulo, "BuscarTitulo");
+        painelPrincipal.add(painelAtualizarObra, "AtualizarObra");
         painelPrincipal.add(painelTopObras, "TopObras");
         painelPrincipal.add(painelAvaliar, "AvaliarObra");
         painelPrincipal.add(painelStatusObra, "StatusObra");
@@ -65,7 +69,6 @@ public class MainFrame extends JFrame {
     private void configurarMenu() {
         JMenuBar menuBar = new JMenuBar();
 
-
         JMenu menuSistema = new JMenu("Sistema");
         JMenuItem itemHome = new JMenuItem("Tela Inicial");
         JMenuItem itemSair = new JMenuItem("Sair");
@@ -77,18 +80,22 @@ public class MainFrame extends JFrame {
         JMenuItem itemRemoverObra = new JMenuItem("Remover Obra do Sistema");
         JMenuItem itemListar = new JMenuItem("Listar Obras Ativas");
         JMenuItem itemBuscarAutor = new JMenuItem("Buscar por Autor");
+        JMenuItem itemBuscarTitulo = new JMenuItem("Buscar por Título");
+        JMenuItem itemAtualizarObra = new JMenuItem("Atualizar Dados de Obra");
         JMenuItem itemTopObras = new JMenuItem("Ranking Top Obras");
         JMenuItem itemAvaliarObra = new JMenuItem("Avaliar uma Obra");
         JMenuItem itemStatusObra = new JMenuItem("Gerenciar Status (Ativar/Desativar)");
 
         menuObras.add(itemCadastrarObra);
         menuObras.add(itemRemoverObra);
-        menuObras.addSeparator();
+        menuObras.add(itemAtualizarObra);
+        menuObras.add(new JSeparator());
         menuObras.add(itemListar);
         menuObras.add(itemBuscarAutor);
+        menuObras.add(itemBuscarTitulo);
         menuObras.add(itemTopObras);
         menuObras.add(itemAvaliarObra);
-        menuObras.addSeparator();
+        menuObras.add(new JSeparator());
         menuObras.add(itemStatusObra);
 
         JMenu menuExposicoes = new JMenu("Exposições");
@@ -99,12 +106,11 @@ public class MainFrame extends JFrame {
         JMenuItem itemRemoverExpo = new JMenuItem("Remover Exposição do Sistema");
 
         menuExposicoes.add(itemVerExpostas);
-        menuExposicoes.addSeparator();
+        menuExposicoes.add(new JSeparator());
         menuExposicoes.add(itemCriarExpo);
         menuExposicoes.add(itemAddObraExpo);
         menuExposicoes.add(itemRemoverObraExpo);
         menuExposicoes.add(itemRemoverExpo);
-
 
         itemHome.addActionListener(e -> cardLayout.show(painelPrincipal, "Home"));
         itemSair.addActionListener(e -> System.exit(0));
@@ -116,6 +122,14 @@ public class MainFrame extends JFrame {
             cardLayout.show(painelPrincipal, "RemoverObra");
         });
 
+        itemAtualizarObra.addActionListener(e -> {
+            Component comp = obterPainelPorNome("AtualizarObra");
+            if (comp instanceof PainelAtualizarObra) {
+                ((PainelAtualizarObra) comp).carregarObrasDoBanco();
+            }
+            cardLayout.show(painelPrincipal, "AtualizarObra");
+        });
+
         itemListar.addActionListener(e -> {
             Component comp = obterPainelPorNome("ListarObras");
             if (comp instanceof PainelListar) ((PainelListar) comp).atualizarTabela();
@@ -123,6 +137,14 @@ public class MainFrame extends JFrame {
         });
 
         itemBuscarAutor.addActionListener(e -> cardLayout.show(painelPrincipal, "BuscarAutor"));
+
+        itemBuscarTitulo.addActionListener(e -> {
+            Component comp = obterPainelPorNome("BuscarTitulo");
+            if (comp instanceof PainelBuscarPorTitulo) {
+                ((PainelBuscarPorTitulo) comp).limparTela();
+            }
+            cardLayout.show(painelPrincipal, "BuscarTitulo");
+        });
 
         itemTopObras.addActionListener(e -> {
             Component comp = obterPainelPorNome("TopObras");
