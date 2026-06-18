@@ -33,4 +33,9 @@ public class Exposicao {
     public Vector<Obra> listarObras() {
         return obras;
     }
+
+    @Override
+    public String toString() {
+        return this.nome;
+    }
 }

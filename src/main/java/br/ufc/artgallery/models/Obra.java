@@ -73,4 +73,9 @@ public abstract class Obra {
     }
 
     public abstract String exibirDetalhes();
+
+    @Override
+    public String toString() {
+        return this.titulo + " - " + this.autor;
+    }
 }
